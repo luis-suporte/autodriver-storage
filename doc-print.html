@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatizador de Atualização do ChromeDriver V2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-block {
+            position: relative;
+        }
+        .copy-button {
+            position: absolute;
+            top: 0.8rem;
+            right: 0.8rem;
+            background-color: #4a5568;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .copy-button:hover {
+            background-color: #2d3748;
+        }
+        /* Estilo para impressão */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .no-print {
+                display: none;
+            }
+            .copy-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl p-4 sm:p-8">
+        
+        <!-- Cabeçalho -->
+        <header class="mb-10 border-b pb-6">
+            <h1 class="text-4xl font-bold text-gray-900">Automatizador de Atualização do ChromeDriver V2</h1>
+            <p class="mt-2 text-lg text-gray-600">Um guia completo para automatizar o ciclo de vida da atualização do ChromeDriver, com versionamento em Git.</p>
+        </header>
+
+        <main>
+            <!-- Funcionalidades Principais -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Funcionalidades Principais</h2>
+                <ul class="list-disc list-inside space-y-2 text-gray-700">
+                    <li><strong class="font-medium text-gray-900">Verificação Automática:</strong> Consulta a API oficial do Google para encontrar a última versão estável do ChromeDriver.</li>
+                    <li><strong class="font-medium text-gray-900">Download com Barra de Progresso:</strong> Baixa o arquivo <code>.zip</code> exibindo o progresso em tempo real.</li>
+                    <li><strong class="font-medium text-gray-900">Versionamento com Git:</strong> Salva o arquivo baixado e um arquivo de versão (<code>version.txt</code>) no repositório.</li>
+                    <li><strong class="font-medium text-gray-900">Criação de Tags:</strong> Cria e envia uma tag Git (ex: <code>v125.0.6422.78</code>) para o repositório remoto.</li>
+                    <li><strong class="font-medium text-gray-900">Notificações de Desktop:</strong> Envia uma notificação nativa ao final do processo.</li>
+                    <li><strong class="font-medium text-gray-900">Interface de Linha de Comando Estilizada:</strong> Utiliza cores para diferenciar logs, sucessos, avisos e erros.</li>
+                </ul>
+            </section>
+
+            <!-- Guia de Instalação -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6">Guia de Instalação e Configuração</h2>
+                <p class="mb-8 text-gray-600">Siga cada passo atentamente para garantir que o ambiente seja configurado corretamente.</p>
+                
+                <!-- Parte 1 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">1</span>Pré-requisitos</h3>
+                    <p>Antes de começar, garanta que você tem os seguintes softwares instalados:</p>
+                    <ul class="list-inside list-disc mt-2 ml-4">
+                        <li>Python (versão 3.8 ou superior)</li>
+                        <li>Git</li>
+                    </ul>
+                </div>
+                
+                <!-- Parte 2 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">2</span>Configuração do Repositório Remoto (GitHub)</h3>
+                    <ol class="list-decimal list-inside space-y-2 mt-2 ml-4">
+                        <li><strong>Crie um Repositório no GitHub:</strong> Acesse o GitHub, clique em "New" e crie um repositório (ex: <code>repositorio-chromedriver</code>). Não o inicialize com README ou outros arquivos.</li>
+                        <li><strong>Copie a URL do Repositório:</strong> Na página do seu novo repositório, copie a URL HTTPS. Será algo como: <code class="bg-gray-200 text-sm p-1 rounded">https://github.com/seu-usuario/repositorio-chromedriver.git</code>.</li>
+                    </ol>
+                </div>
+
+                <!-- Parte 3 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">3</span>Configuração do Ambiente Local</h3>
+                    <ol class="list-decimal list-inside space-y-3 mt-2 ml-4">
+                        <li><strong>Crie a Pasta do Projeto:</strong>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>mkdir projeto-autodriver && cd projeto-autodriver</code></pre>
+                        </li>
+                        <li><strong>Inicialize o Git Localmente:</strong>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>git init</code></pre>
+                        </li>
+                        <li><strong>Conecte o Repositório Local ao Remoto:</strong>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>git remote add origin https://github.com/seu-usuario/repositorio-chromedriver.git</code></pre>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Parte 4 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">4</span>Criação dos Arquivos do Projeto</h3>
+                    <p class="mb-4">Dentro da pasta <code>projeto-autodriver</code>, crie os seguintes arquivos:</p>
+                    
+                    <!-- Code Block: atualiza_chromedriver.py -->
+                    <div class="mb-6">
+                        <p class="font-medium mb-2">1. <code>atualiza_chromedriver.py</code></p>
+                        <div class="code-block bg-gray-900 rounded-lg shadow-lg">
+                            <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                            <pre class="text-white p-4 text-sm overflow-x-auto"><code class="language-python"># -*- coding: utf-8 -*-
+import os
+import requests
+import subprocess
+import hashlib
+import colorama
+from contextlib import contextmanager
+from datetime import datetime
+from dotenv import load_dotenv
+from plyer import notification
+from typing import Optional, Tuple
+
+# Inicializa colorama
+colorama.init(autoreset=True)
+
+class Style:
+    RESET, BOLD, RED, GREEN, YELLOW, BLUE, CYAN = '\033[0m', '\033[1m', '\033[91m', '\033[92m', '\033[93m', '\033[94m', '\033[96m'
+
+# Configuração
+load_dotenv()
+CHROMEDRIVER_PATH = os.getenv('CHROMEDRIVER_PATH')
+ZIP_NAME, VERSION_FILE = 'chromedriver-win64.zip', 'version.txt'
+JSON_URL, CHUNK_SIZE = 'https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json', 1024 * 1024
+
+# Funções Utilitárias
+def log(msg: str, style: str = ""):
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {style}{msg}")
+
+@contextmanager
+def change_dir(path: str):
+    original_path = os.getcwd()
+    try: os.chdir(path); yield
+    finally: os.chdir(original_path)
+
+def calcular_sha256(caminho_arquivo: str) -> str:
+    sha256 = hashlib.sha256()
+    with open(caminho_arquivo, 'rb') as f:
+        for chunk in iter(lambda: f.read(8192), b''): sha256.update(chunk)
+    return sha256.hexdigest()
+
+# Fluxo Principal
+def obter_ultima_versao_e_url() -> Tuple[str, str]:
+    log("Consultando o JSON de versões...", style=Style.CYAN)
+    response = requests.get(JSON_URL, timeout=15)
+    response.raise_for_status()
+    data = response.json()
+    stable_channel = data["channels"]["Stable"]
+    win64_download = next((item for item in stable_channel["downloads"]["chromedriver"] if item["platform"] == "win64"), None)
+    if not win64_download: raise ValueError("URL do chromedriver-win64 não encontrada!")
+    return stable_channel["version"], win64_download["url"]
+
+def ler_versao_salva(path: str) -> Optional[str]:
+    if os.path.exists(path):
+        with open(path, 'r', encoding='utf-8') as f: return f.read().strip()
+    return None
+
+def salvar_versao(path: str, version: str):
+    with open(path, 'w', encoding='utf-8') as f: f.write(version)
+
+def baixar_arquivo_com_progresso(url: str, path: str):
+    response = requests.get(url, stream=True, timeout=60)
+    total_size = int(response.headers.get('Content-Length', 0))
+    response.raise_for_status()
+    downloaded_size = 0
+    with open(path, 'wb') as f:
+        print()
+        for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
+            if chunk:
+                f.write(chunk); downloaded_size += len(chunk)
+                percent = (downloaded_size / total_size) * 100 if total_size > 0 else 0
+                print(f"\r{Style.BLUE}Baixando: {percent:.2f}%", end='', flush=True)
+    print("\n"); log("Download concluído.", style=Style.GREEN)
+
+def git_push_com_tag(repo_path: str, files_to_add: list, tag: str, message: str):
+    try:
+        with change_dir(repo_path):
+            status_result = subprocess.run(['git', 'status', '--porcelain'] + files_to_add, capture_output=True, text=True, check=True)
+            if not status_result.stdout.strip():
+                log("Nenhuma alteração detectada nos arquivos. Pulando commit.", style=Style.YELLOW)
+            else:
+                log("Alterações detectadas. Enviando para o repositório...", style=Style.CYAN)
+                subprocess.run(['git', 'add'] + files_to_add, check=True)
+                subprocess.run(['git', 'commit', '-m', message], check=True)
+                subprocess.run(['git', 'push'], check=True)
+                log("Commit enviado com sucesso.", style=Style.GREEN)
+
+            tags_result = subprocess.run(['git', 'tag'], capture_output=True, text=True, check=True)
+            if tag in tags_result.stdout.splitlines():
+                log(f"A tag '{Style.BOLD}{tag}{Style.RESET}{Style.YELLOW}' já existe.", style=Style.YELLOW)
+            else:
+                log(f"Criando e enviando a tag '{Style.BOLD}{tag}{Style.RESET}{Style.CYAN}'...", style=Style.CYAN)
+                subprocess.run(['git', 'tag', tag], check=True)
+                subprocess.run(['git', 'push', 'origin', tag], check=True)
+                log(f"Tag '{Style.BOLD}{tag}{Style.RESET}{Style.GREEN}' enviada com sucesso.", style=Style.GREEN)
+    except FileNotFoundError: log("ERRO: 'git' não encontrado. Verifique a instalação.", style=Style.RED)
+    except subprocess.CalledProcessError as e:
+        log(f"ERRO ao executar comandos Git: {e}", style=Style.RED)
+        if e.stderr: log(f"Stderr: {e.stderr}", style=Style.RED)
+        raise e
+
+def notificar(titulo: str, mensagem: str):
+    try: notification.notify(title=titulo, message=mensagem, timeout=10)
+    except Exception as e: log(f"Falha ao enviar notificação: {e}", style=Style.YELLOW)
+
+def main():
+    if not CHROMEDRIVER_PATH:
+        log("ERRO: Variável 'CHROMEDRIVER_PATH' não definida no arquivo .env.", style=Style.RED); return
+    os.makedirs(CHROMEDRIVER_PATH, exist_ok=True)
+    caminho_zip, caminho_version = os.path.join(CHROMEDRIVER_PATH, ZIP_NAME), os.path.join(CHROMEDRIVER_PATH, VERSION_FILE)
+    try:
+        versao_recente, url_chromedriver = obter_ultima_versao_e_url()
+        log(f"Última versão estável: {Style.BOLD}{versao_recente}", style=Style.GREEN)
+        versao_salva = ler_versao_salva(caminho_version)
+        log(f"Versão local: {Style.BOLD}{versao_salva or 'Nenhuma'}", style=Style.CYAN)
+        if versao_salva == versao_recente:
+            log("Você já possui a última versão.", style=Style.YELLOW); return
+        log("Nova versão detectada. Iniciando download...", style=Style.BLUE)
+        baixar_arquivo_com_progresso(url_chromedriver, caminho_zip)
+        salvar_versao(caminho_version, versao_recente)
+        tag, commit_message = f'v{versao_recente}', f"Atualiza ChromeDriver para a versão {versao_recente}"
+        git_push_com_tag(repo_path=CHROMEDRIVER_PATH, files_to_add=[ZIP_NAME, VERSION_FILE], tag=tag, message=commit_message)
+        notificar("ChromeDriver Atualizado", f"Versão {versao_recente} baixada e enviada.")
+    except (requests.RequestException, subprocess.CalledProcessError, ValueError, KeyError) as e:
+        log(f"O processo foi interrompido por um erro. Detalhes: {e}", style=Style.RED)
+        return
+    log("Processo concluído com sucesso!", style=Style.BOLD + Style.GREEN)
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: requirements.txt -->
+                    <div class="mb-6">
+                        <p class="font-medium mb-2">2. <code>requirements.txt</code></p>
+                        <div class="code-block bg-gray-900 rounded-lg shadow-lg">
+                            <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                            <pre class="text-white p-4 text-sm overflow-x-auto"><code>requests
+python-dotenv
+plyer
+colorama
+</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: .gitignore -->
+                    <div class="mb-6">
+                        <p class="font-medium mb-2">3. <code>.gitignore</code></p>
+                        <div class="code-block bg-gray-900 rounded-lg shadow-lg">
+                            <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                            <pre class="text-white p-4 text-sm overflow-x-auto"><code># Ambiente Virtual
+venv/
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Arquivo de configuração de ambiente
+.env
+
+# Arquivos de IDE
+.vscode/
+.idea/
+</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: .env.example -->
+                    <div class="mb-6">
+                        <p class="font-medium mb-2">4. <code>.env.example</code></p>
+                        <div class="code-block bg-gray-900 rounded-lg shadow-lg">
+                            <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                            <pre class="text-white p-4 text-sm overflow-x-auto"><code># Copie este arquivo para .env e substitua pelo caminho absoluto para a pasta do projeto.
+CHROMEDRIVER_PATH="/caminho/absoluto/para/a/pasta/do/projeto"
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parte 5 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">5</span>Configuração Final do Ambiente</h3>
+                     <ol class="list-decimal list-inside space-y-3 mt-2 ml-4">
+                        <li><strong>Crie e Ative o Ambiente Virtual:</strong>
+                            <p class="text-sm my-1">Para Windows:</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>python -m venv venv
+venv\Scripts\activate</code></pre>
+                            <p class="text-sm my-1">Para macOS/Linux:</p>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>python3 -m venv venv
+source venv/bin/activate</code></pre>
+                        </li>
+                        <li><strong>Instale as Dependências:</strong>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>pip install -r requirements.txt</code></pre>
+                        </li>
+                        <li><strong>Configure sua Variável de Ambiente:</strong>
+                            <ul class="list-disc list-inside ml-4 mt-1 space-y-1">
+                                <li>Copie o arquivo de exemplo: <code class="bg-gray-200 text-sm p-1 rounded">cp .env.example .env</code> (ou <code>copy</code> no Windows).</li>
+                                <li>Abra o novo arquivo <code>.env</code> e edite a variável <code>CHROMEDRIVER_PATH</code> com o <strong>caminho absoluto</strong> para a pasta <code>projeto-autodriver</code>.</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Parte 6 -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center mr-3">6</span>Primeira Execução e Solução de Problemas</h3>
+                    <ol class="list-decimal list-inside space-y-4 mt-2 ml-4">
+                        <li><strong>Execute o Script:</strong>
+                            <pre class="bg-gray-800 text-white p-3 rounded-md mt-1 text-sm"><code>python atualiza_chromedriver.py</code></pre>
+                        </li>
+                        <li>
+                            <strong>Possível Erro de Autenticação (Exit Code 128):</strong>
+                            <div class="mt-2 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-r-lg">
+                                <p><strong class="font-semibold">Problema:</strong> O GitHub não aceita mais senhas de conta via terminal.</p>
+                                <p><strong class="font-semibold">Solução:</strong> Crie um <strong>Personal Access Token (PAT)</strong> com permissão de <code>repo</code> e use-o como senha ao ser solicitado no terminal.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <strong>Possível Erro "No Upstream Branch":</strong>
+                             <div class="mt-2 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 rounded-r-lg">
+                                <p><strong class="font-semibold">Problema:</strong> O Git local não sabe a qual branch remota se conectar.</p>
+                                <p><strong class="font-semibold">Solução:</strong> Execute o comando que o Git sugere: <code class="bg-gray-200 text-sm p-1 rounded">git push --set-upstream origin main</code> (use <code>main</code> ou <code>master</code>).</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+            </section>
+            
+            <!-- Uso Contínuo -->
+            <section>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Uso Contínuo</h2>
+                <p class="mb-4">Após a configuração inicial, basta navegar até a pasta do projeto, ativar o ambiente virtual e rodar o script para verificar novas versões.</p>
+                <pre class="bg-gray-800 text-white p-4 rounded-md text-sm"><code># 1. Ative o ambiente virtual (ex: venv\Scripts\activate)
+# 2. Execute o script
+python atualiza_chromedriver.py</code></pre>
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-6 border-t">
+            <p class="text-lg font-semibold text-gray-700">Luis Rondon</p>
+            <p class="text-sm text-gray-600 mb-4">Nova Gestões | JCS Junior Advogados</p>
+            <p class="text-sm text-gray-500">Documento gerado em <span id="generation-date"></span>.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Função para copiar o código para a área de transferência
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.querySelector('code').innerText;
+            
+            // Usando document.execCommand para compatibilidade em iframes
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                button.innerText = 'Copiado!';
+            } catch (err) {
+                console.error('Falha ao copiar texto: ', err);
+                button.innerText = 'Erro!';
+            }
+            document.body.removeChild(textarea);
+
+            setTimeout(() => {
+                button.innerText = 'Copiar';
+            }, 2000);
+        }
+
+        // Adiciona a data de geração no rodapé
+        document.getElementById('generation-date').textContent = new Date().toLocaleDateString('pt-BR');
+    </script>
+</body>
+</html>
+999
